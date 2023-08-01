@@ -1,0 +1,12 @@
+# Ignore AppData directory
+AppData/
+
+# Ignore other unnecessary files (add more if needed)
+venv/
+__pycache__/
+.vscode/
+.ipynb_checkpoints/
+*.pyc
+*.pyo
+*.pyd
+*.db
