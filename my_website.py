@@ -1,6 +1,5 @@
 from flask import Flask,  render_template, request
 from polygon import RESTClient
-from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 
@@ -9,7 +8,42 @@ website = Flask(__name__)
 @website.route('/', methods=['GET'])
 def input_form():
     # Render the input form when the user visits the website (GET request)
-    return render_template('input_form.html')
+    return '''
+      <html>
+    <head>
+        <title>Enter Trading Details</title>
+    </head>
+    <body>
+        <h1>Enter Trading Details</h1>
+        <form method="POST" action="/trade">
+            <label for="ticker">Ticker:</label>
+            <input type="text" name="ticker" required>
+            <br>
+            <label for="start_date">Date:</label>
+            <input type="date" name="start_date" required>
+            <br>
+            <label for="end_date">Date:</label>
+            <input type="date" name="end_date" required>
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+    </html>
+'''
+def output(ticker,dataframe):
+    return f'''
+<html>
+<head>
+    <title>Trading Output - Ticker: {ticker}</title>
+</head>
+<body>
+    <h1>Trading Output</h1>
+    <p>Ticker: {ticker}</p>
+    <!-- Render the DataFrame as an HTML table -->
+    {dataframe}
+</body>
+</html>
+'''
 
 @website.route('/trade', methods=['POST'])
 def trade():
@@ -135,7 +169,8 @@ def trade():
 
     df_html = df.to_html()
 
-    return render_template('output_template.html', ticker=ticker,  dataframe=df_html)
+    return output(ticker=ticker, dataframe=df_html)
+
 
 if __name__ == '__main__':
     # Run the Flask app
