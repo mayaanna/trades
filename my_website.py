@@ -8,42 +8,7 @@ website = Flask(__name__)
 @website.route('/', methods=['GET'])
 def input_form():
     # Render the input form when the user visits the website (GET request)
-    return '''
-      <html>
-    <head>
-        <title>Enter Trading Details</title>
-    </head>
-    <body>
-        <h1>Enter Trading Details</h1>
-        <form method="POST" action="/trade">
-            <label for="ticker">Ticker:</label>
-            <input type="text" name="ticker" required>
-            <br>
-            <label for="start_date">Date:</label>
-            <input type="date" name="start_date" required>
-            <br>
-            <label for="end_date">Date:</label>
-            <input type="date" name="end_date" required>
-            <br>
-            <input type="submit" value="Submit">
-        </form>
-    </body>
-    </html>
-'''
-def output(ticker,dataframe):
-    return f'''
-<html>
-<head>
-    <title>Trading Output - Ticker: {ticker}</title>
-</head>
-<body>
-    <h1>Trading Output</h1>
-    <p>Ticker: {ticker}</p>
-    <!-- Render the DataFrame as an HTML table -->
-    {dataframe}
-</body>
-</html>
-'''
+    return render_template("input.html")
 
 @website.route('/trade', methods=['POST'])
 def trade():
@@ -169,7 +134,7 @@ def trade():
 
     df_html = df.to_html()
 
-    return output(ticker=ticker, dataframe=df_html)
+    return render_template("ouput.html", ticker=ticker, dataframe=df_html)
 
 
 if __name__ == '__main__':
