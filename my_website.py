@@ -134,7 +134,7 @@ def trade():
 
     df_html = df.to_html()
 
-    return render_template("ouput.html", ticker=ticker, dataframe=df_html)
+    return render_template("output.html", ticker=ticker, dataframe=df_html)
 
 
 if __name__ == '__main__':
