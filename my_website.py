@@ -8,7 +8,7 @@ website = Flask(__name__)
 @website.route('/', methods=['GET'])
 def input_form():
     # Render the input form when the user visits the website (GET request)
-    return render_template("input.html")
+    return render_template("index.html")
 
 @website.route('/trade', methods=['POST'])
 def trade():
