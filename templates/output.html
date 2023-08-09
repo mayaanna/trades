@@ -1,11 +1,59 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Trading Output - Ticker: {{ ticker }}</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        h1 {
+            color: #007BFF; /* Change the color to your preference */
+        }
+        
+        p {
+            font-size: 18px; /* Change the font size to your preference */
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd; /* Single border for all cells */
+        }
+        
+        .header-row th {
+            background-color: beige; /* Change to the beige color you want */
+        }
+        
+        .na-cell {
+            background-color: beige; /* Change to the beige color you want for NA cells */
+        }
+    </style>
 </head>
 <body>
     <h1>Trading Output</h1>
     <p>Ticker: {{ ticker }}</p>
     <!-- Render the DataFrame as an HTML table -->
-    {{ dataframe | safe }}
+    <table>
+        <!-- No header row here, since the DataFrame headers will be used -->
+        {{ dataframe | safe }}
+    </table>
+    
+    <script>
+        // JavaScript to find and fill NA cells with a specific class
+        const cellsWithNA = document.querySelectorAll('td');
+        cellsWithNA.forEach(cell => {
+            if (cell.textContent.trim() === 'NA') {
+                cell.classList.add('na-cell');
+            }
+        });
+    </script>
 </body>
 </html>
