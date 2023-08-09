@@ -9,7 +9,7 @@
         }
         
         h1 {
-            color: #007BFF; /* Change the color to your preference */
+            color: #B9BFFD; /* Change the color to your preference */
         }
         
         p {
@@ -29,11 +29,11 @@
         }
         
         .header-row th {
-            background-color: beige; /* Change to the beige color you want */
+            background-color: #E6DAFC; /* Change to the beige color you want */
         }
         
         .na-cell {
-            background-color: beige; /* Change to the beige color you want for NA cells */
+            background-color: #E6DAFC; /* Change to the beige color you want for NA cells */
         }
     </style>
 </head>
@@ -50,7 +50,7 @@
         // JavaScript to find and fill NA cells with a specific class
         const cellsWithNA = document.querySelectorAll('td');
         cellsWithNA.forEach(cell => {
-            if (cell.textContent.trim() === 'NA') {
+            if (cell.textContent.trim() === 'NaN') {
                 cell.classList.add('na-cell');
             }
         });
