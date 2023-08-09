@@ -43,18 +43,6 @@
     <p>Ticker: {{ ticker }}</p>
     <!-- Render the DataFrame as an HTML table -->
     <table>
-       <!-- Table header row -->
-        <tr class="header-row">
-            <th>Date</th>
-            <th>HIP</th>
-            <th>LOP</th>
-            <th>High2</th>
-            <th>Low2</th>
-            <th>High3</th>
-            <th>Low3</th>
-            <th>High3A</th>
-            <th>Low3A</th>
-        </tr>
         {{ dataframe | safe }}
     </table>
     
