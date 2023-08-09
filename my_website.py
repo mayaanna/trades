@@ -79,6 +79,9 @@ def trade():
     Low1['Low2'] = np.where(Low2_conditions, Low1['low'], np.nan)
     High1['High2'] = np.where(High2_conditions, High1['high'], np.nan)
 
+    # Concatenate Low1 and High1 DataFrames along the rows
+    # Merge Low1 and High1 DataFrames side by side
+    # Define the columns you want to select from each DataFrame
     low1_columns_to_select = ['date', 'low', 'LOP', 'Low2']  # Replace 'column1' and 'column2' with actual column names from Low1 DataFrame
     high1_columns_to_select = ['date', 'high', 'HIP', 'High2']  # Replace 'column3' and 'column4' with actual column names from High1 DataFrame
 
@@ -87,6 +90,9 @@ def trade():
 
     low_high = pd.merge(Lows, Highs, on = 'date', how = 'outer')
     low_high = low_high[['date', 'LOP', 'HIP']]
+
+    #print(Highs.head(10))
+    #so from here it is correct - HIPs and High2 is the right answers
 
     Low2s = Lows[Lows['Low2'].notna()]
     High2s = Highs[Highs['High2'].notna()]
@@ -99,6 +105,7 @@ def trade():
         (High2s['High2'] > High2s['High2'].shift(1)) & (High2s['High2'] > High2s['High2'].shift(-1))
     )
 
+    # Create a new column 'Filtered_Lows' with filtered low values and set others to NaN
     Low2s['Low3'] = np.where(Low3_conditions, Low2s['LOP'], np.nan)
     High2s['High3'] = np.where(High3_conditions, High2s['HIP'], np.nan)
 
@@ -106,31 +113,40 @@ def trade():
         (High2s['High2'].shift(1) < High2s['High2']) &
         (High2s['High2'].shift(-1) < High2s['High2']) &
         (High2s['High2'].shift(1) > High2s['High2'].shift(-1))
-)
+    )
 
     Low3A_conditions = (
         (Low2s['Low2'].shift(1) > Low2s['Low2']) &
         (Low2s['Low2'].shift(-1) > Low2s['Low2']) &
         (Low2s['Low2'].shift(1) < Low2s['Low2'].shift(-1))
-)
-    
+    )
+        
+        # Create a new column 'Filtered_Lows' with filtered low values and set others to NaN
     Low2s['Low3A'] = np.where(Low3A_conditions, Low2s['LOP'], np.nan)
     High2s['High3A'] = np.where(High3A_conditions, High2s['HIP'], np.nan)
-    
+        
+    # Concatenate the DataFrames along the rows
     merged_df = pd.concat([Low2s, High2s])
 
+    # Sort the merged DataFrame based on the 'date' column
     merged_df.sort_values(by='date', inplace=True)
 
+    # Reset the index of the merged DataFrame
     merged_df.reset_index(drop=True, inplace=True)
 
-    df_final = merged_df[['date', 'High2', 'High3', 'Low2', 'Low3']]
+    df_final = merged_df[['date', 'High2', 'High3', 'Low2', 'Low3', 'High3A', 'Low3A']]
+    df_final.to_csv('tesla.csv', index=False)
 
+    # Merge the DataFrames based on the 'date' column using an outer join
     merged_df2 = pd.merge(df_final, low_high, on='date', how='outer')
 
+    # Sort the merged DataFrame based on the 'date' column
     merged_df2.sort_values(by='date', inplace=True)
 
+    # Reset the index of the merged DataFrame
     merged_df2.reset_index(drop=True, inplace=True)
-    df = merged_df2[['date', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']]
+
+    df = merged_df2[['date', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
 
     df_html = df.to_html()
 
