@@ -20,6 +20,7 @@
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #ddd;
+            
         }
         
         th, td {
@@ -32,8 +33,8 @@
             background-color: #E6DAFC; /* Change to the beige color you want */
         }
         
-        .na-cell {
-            background-color: #E6DAFC; /* Change to the beige color you want for NA cells */
+        .numeric-cell {
+            background-color: #EDE4FC; /* Change to the beige color you want for NA cells */
         }
     </style>
 </head>
@@ -42,18 +43,39 @@
     <p>Ticker: {{ ticker }}</p>
     <!-- Render the DataFrame as an HTML table -->
     <table>
-        <!-- No header row here, since the DataFrame headers will be used -->
+       <!-- Table header row -->
+        <tr class="header-row">
+            <th>Date</th>
+            <th>HIP</th>
+            <th>LOP</th>
+            <th>High2</th>
+            <th>Low2</th>
+            <th>High3</th>
+            <th>Low3</th>
+            <th>High3A</th>
+            <th>Low3A</th>
+        </tr>
         {{ dataframe | safe }}
     </table>
     
-    <script>
-        // JavaScript to find and fill NA cells with a specific class
-        const cellsWithNA = document.querySelectorAll('td');
-        cellsWithNA.forEach(cell => {
-            if (cell.textContent.trim() === 'NaN') {
-                cell.classList.add('na-cell');
-            }
+   <script>
+        // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
+        const rows = document.querySelectorAll('tr');
+        rows.forEach((row, rowIndex) => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, cellIndex) => {
+                const content = cell.textContent.trim();
+                if (rowIndex === 0) {
+                    cell.classList.add('header-cell');
+                } else if (!isNaN(content) && content !== '') {
+                    cell.classList.add('numeric-cell');
+                }
+                if (content === 'NaN') {
+                    cell.textContent = ''; // Replace 'NaN' with an empty cell
+                }
+            });
         });
     </script>
 </body>
 </html>
+
