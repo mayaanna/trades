@@ -1,11 +1,69 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Trading Output - Ticker: {{ ticker }}</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        h1 {
+            color: #B9BFFD; /* Change the color to your preference */
+        }
+        
+        p {
+            font-size: 18px; /* Change the font size to your preference */
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+            
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd; /* Single border for all cells */
+        }
+        
+        .header-row th {
+            background-color: #E6DAFC; /* Change to the beige color you want */
+        }
+        
+        .numeric-cell {
+            background-color: #EDE4FC; /* Change to the beige color you want for NA cells */
+        }
+    </style>
 </head>
 <body>
     <h1>Trading Output</h1>
     <p>Ticker: {{ ticker }}</p>
     <!-- Render the DataFrame as an HTML table -->
-    {{ dataframe | safe }}
+    <table>
+        {{ dataframe | safe }}
+    </table>
+    
+   <script>
+        // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
+        const rows = document.querySelectorAll('tr');
+        rows.forEach((row, rowIndex) => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, cellIndex) => {
+                const content = cell.textContent.trim();
+                if (rowIndex === 0) {
+                    cell.classList.add('header-cell');
+                } else if (!isNaN(content) && content !== '') {
+                    cell.classList.add('numeric-cell');
+                }
+                if (content === 'NaN') {
+                    cell.textContent = ''; // Replace 'NaN' with an empty cell
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+
