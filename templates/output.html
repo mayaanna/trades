@@ -54,18 +54,17 @@
                 if (content === 'NaN') {
                     cell.textContent = ''; // Replace 'NaN' with an empty cell
                 }
-                
-                // Apply different background colors based on the cell index (column)
-                if (!isNaN(content) && content !== '' && cellIndex !== 0 && cellIndex !== 1) {
-                    // Apply a color to all numeric cells (excluding date and average columns)
-                    cell.style.backgroundColor = '#e6c2f2'; // Change color to your preference
-                }
-                if (cellIndex === 8 || cellIndex === 9 ) {
-                    cell.style.backgroundColor = '#cc51f5'; // Change color to your preference
-                } else if (cellIndex === 6 || cellIndex === 7) {
-                    cell.style.backgroundColor = '#db77fc'; // Change color to your preference
-                }
-                // Add more conditions for different columns as needed
+                    
+                if (!isNaN(content) && content !== '') {
+                    if (cellIndex === 6 || cellIndex === 7) {
+                        cell.style.backgroundColor = '#dd84fa'; // Change color to your preference for columns 6 and 7
+                    } else if (cellIndex === 8 || cellIndex === 9) {
+                        cell.style.backgroundColor = '#cd3dfc'; // Change color to your preference for columns 8 and 9
+                    } else {
+                        cell.style.backgroundColor = '#f2ccff'; // Default color for other numeric cells
+            }
+        }
+                    // Add more conditions for different columns as needed
             });
         });
     </script>
