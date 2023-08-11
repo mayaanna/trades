@@ -30,6 +30,9 @@ def trade():
 
     data['date'] = pd.to_datetime(data['timestamp'], unit='ms')
 
+    period = 55
+    data['average'] = data['close'].rolling(window=period).mean()
+
     # Calculate the Low1 that meet the conditions
     data['Prev_Lows'] = data['low'].shift(1)
     data['Next_Lows'] = data['low'].shift(-1)
@@ -79,9 +82,6 @@ def trade():
     Low1['Low2'] = np.where(Low2_conditions, Low1['low'], np.nan)
     High1['High2'] = np.where(High2_conditions, High1['high'], np.nan)
 
-    # Concatenate Low1 and High1 DataFrames along the rows
-    # Merge Low1 and High1 DataFrames side by side
-    # Define the columns you want to select from each DataFrame
     low1_columns_to_select = ['date', 'low', 'LOP', 'Low2']  # Replace 'column1' and 'column2' with actual column names from Low1 DataFrame
     high1_columns_to_select = ['date', 'high', 'HIP', 'High2']  # Replace 'column3' and 'column4' with actual column names from High1 DataFrame
 
@@ -91,8 +91,16 @@ def trade():
     low_high = pd.merge(Lows, Highs, on = 'date', how = 'outer')
     low_high = low_high[['date', 'LOP', 'HIP']]
 
-    #print(Highs.head(10))
-    #so from here it is correct - HIPs and High2 is the right answers
+    filtered_low_high = low_high[low_high['HIP'].notna() | low_high['LOP'].notna()]
+
+    # Merge the 'average' column back into the filtered dataframe
+    filtered_low_high = pd.merge(filtered_low_high, data[['date', 'average']], on='date', how='left')
+
+    # Create a new DataFrame with selected columns
+    selected_columns = ['date', 'average', 'HIP', 'LOP']
+
+    filtered_low_high_selected = filtered_low_high[selected_columns]
+
 
     Low2s = Lows[Lows['Low2'].notna()]
     High2s = Highs[Highs['High2'].notna()]
@@ -135,10 +143,9 @@ def trade():
     merged_df.reset_index(drop=True, inplace=True)
 
     df_final = merged_df[['date', 'High2', 'High3', 'Low2', 'Low3', 'High3A', 'Low3A']]
-    df_final.to_csv('tesla.csv', index=False)
 
     # Merge the DataFrames based on the 'date' column using an outer join
-    merged_df2 = pd.merge(df_final, low_high, on='date', how='outer')
+    merged_df2 = pd.merge(df_final, filtered_low_high_selected, on='date', how='outer')
 
     # Sort the merged DataFrame based on the 'date' column
     merged_df2.sort_values(by='date', inplace=True)
@@ -146,8 +153,8 @@ def trade():
     # Reset the index of the merged DataFrame
     merged_df2.reset_index(drop=True, inplace=True)
 
-    df = merged_df2[['date', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
-
+    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
+    df[['average','HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average','HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
     df_html = df.to_html()
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
