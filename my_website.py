@@ -101,7 +101,6 @@ def trade():
 
     filtered_low_high_selected = filtered_low_high[selected_columns]
 
-
     Low2s = Lows[Lows['Low2'].notna()]
     High2s = Highs[Highs['High2'].notna()]
 
@@ -153,8 +152,8 @@ def trade():
     # Reset the index of the merged DataFrame
     merged_df2.reset_index(drop=True, inplace=True)
 
-    df = merged_df2[['date', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
-
+    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
+    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
     df_html = df.to_html()
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
