@@ -29,13 +29,6 @@
             border: 1px solid #ddd; /* Single border for all cells */
         }
         
-        .header-row th {
-            background-color: #E6DAFC; /* Change to the beige color you want */
-        }
-        
-        .numeric-cell {
-            background-color: #EDE4FC; /* Change to the beige color you want for NA cells */
-        }
     </style>
 </head>
 <body>
@@ -46,7 +39,7 @@
         {{ dataframe | safe }}
     </table>
     
-   <script>
+    <script>
         // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
         const rows = document.querySelectorAll('tr');
         rows.forEach((row, rowIndex) => {
@@ -61,9 +54,21 @@
                 if (content === 'NaN') {
                     cell.textContent = ''; // Replace 'NaN' with an empty cell
                 }
+                
+                // Apply different background colors based on the cell index (column)
+                if (!isNaN(content) && content !== '' && cellIndex !== 0 && cellIndex !== 1) {
+                    // Apply a color to all numeric cells (excluding date and average columns)
+                    cell.style.backgroundColor = '#e6c2f2'; // Change color to your preference
+                }
+                if (cellIndex === 8 || cellIndex === 9 ) {
+                    cell.style.backgroundColor = '#cc51f5'; // Change color to your preference
+                } else if (cellIndex === 6 || cellIndex === 7) {
+                    cell.style.backgroundColor = '#db77fc'; // Change color to your preference
+                }
+                // Add more conditions for different columns as needed
             });
         });
     </script>
-</body>
+</body>    
 </html>
 

@@ -154,7 +154,7 @@ def trade():
 
     df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
     df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
-    df_html = df.to_html()
+    df_html = df.to_html(index=False)
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
 
