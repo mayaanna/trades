@@ -153,7 +153,7 @@ def trade():
     merged_df2.reset_index(drop=True, inplace=True)
 
     df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
-    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
+    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']].round(2)
     df_html = df.to_html(index=False)
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
