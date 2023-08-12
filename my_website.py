@@ -20,10 +20,12 @@ def trade():
     ticker = request.form['ticker']
     end_date = request.form['end_date']
     start_date = request.form['start_date']
+    timespan = request.form['timespan']
+    multiplier = request.form['multiplier']
     
     # List Aggregates (Bars)
     aggs = []
-    for a in client.list_aggs(ticker=ticker, multiplier=3, timespan="hour", from_=f"{start_date}", to=f"{end_date}", limit=50000):
+    for a in client.list_aggs(ticker=ticker, multiplier=multiplier, timespan=timespan, from_=f"{start_date}", to=f"{end_date}", limit=50000):
         aggs.append(a)
 
     data = pd.DataFrame(aggs)
