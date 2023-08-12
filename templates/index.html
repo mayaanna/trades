@@ -33,7 +33,21 @@
             margin-bottom: 10px;
             color: #6a2c70; /* Darker purple text color */
         }
-        
+          select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Add some spacing between the dropdowns and the submit button */
+        select[name="timespan"],
+        select[name="multiplier"],
+        input[type="submit"] {
+            margin-bottom: 30px;
+        }
+
         input[type="text"],
         input[type="date"],
         input[type="submit"] {
@@ -48,7 +62,7 @@
     width: calc(60% - 5px); /* Adjust width for date inputs */
 }
               input[type="text"] {
-    width: calc(60% - 5px); /* Adjust width for date inputs */
+    width: calc(60% - 5px); /* Adjust width for other inputs */
 }
         input[type="submit"] {
             background-color: #6a2c70; /* Darker purple submit button color */
@@ -74,7 +88,7 @@
         <label for="end_date">End Date:</label>
         <input type="date" name="end_date" required>
         <br>
-        <label for="timespan">Choose a car:</label>
+        <label for="timespan">Choose a Timespan:</label>
         <select id="timespan" name="timespan">
             <option value="hour" selected>Hourly</option>
             <option value="day">Daily</option>
@@ -83,11 +97,33 @@
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
         </select>
+        <label for="multiplier">Choose a Multiplier:</label>
         <select id="multiplier" name="multiplier">
-            <option value="3" selected>e.g. 3-Hour</option>
-            <option value="1">e.g. 1-Hour</option>
-            <option value="2">e.g. 2-Hour</option>
-            <option value="4">e.g. 4-Hour</option>
+            <optgroup label="Hourly">
+                <option value="3" selected>3-Hour</option>
+                <option value="1">1-Hour</option>
+                <option value="2">2-Hour</option>
+                <option value="4">4-Hour</option>
+            </optgroup>
+            <optgroup label="Daily"
+                <option value="1" selected>Daily</option>
+                <option value="2">2-Day</option>
+                <option value="3">3-Day</option>
+                <option value="4">4-Day</option>
+            </optgroup>
+            <optgroup label="Weekly"
+                <option value="1" selected>Weekly</option>
+            </optgroup>
+            <optgroup label="Monthly"
+                <option value="1" selected>Monthly</option>
+            </optgroup>
+            <optgroup label="Quarterly"
+                <option value="1" selected>Quarterly</option>
+            </optgroup>
+            <optgroup label="Yearly"
+                <option value="1" selected>Yearly</option>
+                <option value="2">Semi-Annually</option>
+            </optgroup>
         </select>
         <input type="submit" value="Submit">
     </form>
