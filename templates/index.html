@@ -74,6 +74,21 @@
         <label for="end_date">End Date:</label>
         <input type="date" name="end_date" required>
         <br>
+        <label for="timespan">Choose a car:</label>
+        <select id="timespan" name="timespan">
+            <option value="hour" selected>Hourly</option>
+            <option value="day">Daily</option>
+            <option value="week">Weekly</option>
+            <option value="month">Monthly</option>
+            <option value="quarter">Quarterly</option>
+            <option value="year">Yearly</option>
+        </select>
+        <select id="multiplier" name="multiplier">
+            <option value="3" selected>e.g. 3-Hour</option>
+            <option value="1">e.g. 1-Hour</option>
+            <option value="2">e.g. 2-Hour</option>
+            <option value="4">e.g. 4-Hour</option>
+        </select>
         <input type="submit" value="Submit">
     </form>
 </body>
