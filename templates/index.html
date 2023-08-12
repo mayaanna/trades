@@ -36,7 +36,7 @@
           select {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -45,7 +45,7 @@
         select[name="timespan"],
         select[name="multiplier"],
         input[type="submit"] {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         input[type="text"],
@@ -75,6 +75,42 @@
             background-color: #4c1a4e; /* Slightly darker purple on hover */
         }
     </style>
+     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const timespanSelect = document.getElementById("timespan");
+            const multiplierSelect = document.getElementById("multiplier");
+
+            // Define the available multipliers for each timespan
+            const multipliersByTimespan = {
+                hour: ["1-Hour", "2-Hour", "3-Hour", "4-Hour"],
+                day: ["Daily", "2-Day", "3-Day", "4-Day"],
+                week: ["Weekly"],
+                month: ["Monthly"],
+                quarter: ["Quarterly"],
+                year: ["Yearly", "Semi-Annually"]
+            };
+
+            // Function to update multipliers based on the selected timespan
+            function updateMultipliers() {
+                const selectedTimespan = timespanSelect.value;
+                multiplierSelect.innerHTML = ""; // Clear existing options
+                
+                // Create new options based on the selected timespan
+                multipliersByTimespan[selectedTimespan].forEach(multiplier => {
+                    const option = document.createElement("option");
+                    option.value = multiplier;
+                    option.textContent = multiplier;
+                    multiplierSelect.appendChild(option);
+                });
+            }
+
+            // Initial update based on the default selected timespan
+            updateMultipliers();
+
+            // Add event listener to timespan select
+            timespanSelect.addEventListener("change", updateMultipliers);
+        });
+    </script>
 </head>
 <body>
     <h1>Enter Trading Details</h1>
@@ -99,28 +135,28 @@
         </select>
         <label for="multiplier">Choose a Multiplier:</label>
         <select id="multiplier" name="multiplier">
-            <optgroup label="Hourly">
+            <optgroup label="Hour">
                 <option value="3" selected>3-Hour</option>
                 <option value="1">1-Hour</option>
                 <option value="2">2-Hour</option>
                 <option value="4">4-Hour</option>
             </optgroup>
-            <optgroup label="Daily"
+            <optgroup label="Day">
                 <option value="1" selected>Daily</option>
                 <option value="2">2-Day</option>
                 <option value="3">3-Day</option>
                 <option value="4">4-Day</option>
             </optgroup>
-            <optgroup label="Weekly"
+            <optgroup label="Week">
                 <option value="1" selected>Weekly</option>
             </optgroup>
-            <optgroup label="Monthly"
+            <optgroup label="Month">
                 <option value="1" selected>Monthly</option>
             </optgroup>
-            <optgroup label="Quarterly"
+            <optgroup label="Quarter">
                 <option value="1" selected>Quarterly</option>
             </optgroup>
-            <optgroup label="Yearly"
+            <optgroup label="Year>
                 <option value="1" selected>Yearly</option>
                 <option value="2">Semi-Annually</option>
             </optgroup>
