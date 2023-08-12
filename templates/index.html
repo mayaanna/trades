@@ -41,12 +41,12 @@
             border-radius: 5px;
         }
 
-        /* Add some spacing between the dropdowns and the submit button 
+        // Add some spacing between the dropdowns and the submit button 
         select[name="timespan"],
         select[name="multiplier"],
         input[type="submit"] {
             margin-bottom: 20px;
-        } */
+        } 
 
         input[type="text"],
         input[type="date"],
@@ -61,6 +61,9 @@
         input[type="date"] {
     width: calc(60% - 5px); /* Adjust width for date inputs */
 }
+        input[type="text"] {
+    width: calc(60% - 5px); /* Adjust width for date inputs */
+}
         input[type="submit"] {
             background-color: #6a2c70; /* Darker purple submit button color */
             color: white;
@@ -72,43 +75,7 @@
             background-color: #4c1a4e; /* Slightly darker purple on hover */
         }
     </style>
-    /*
-     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const timespanSelect = document.getElementById("timespan");
-            const multiplierSelect = document.getElementById("multiplier");
 
-            // Define the available multipliers for each timespan
-            const multipliersByTimespan = {
-                hour: ["1-Hour", "2-Hour", "3-Hour", "4-Hour"],
-                day: ["Daily", "2-Day", "3-Day", "4-Day"],
-                week: ["Weekly"],
-                month: ["Monthly"],
-                quarter: ["Quarterly", "Semi-Annual"],
-                year: ["Yearly"]
-            };
-
-            // Function to update multipliers based on the selected timespan
-            function updateMultipliers() {
-                const selectedTimespan = timespanSelect.value;
-                multiplierSelect.innerHTML = ""; // Clear existing options
-                
-                // Create new options based on the selected timespan
-                multipliersByTimespan[selectedTimespan].forEach(multiplier => {
-                    const option = document.createElement("option");
-                    option.value = multiplier;
-                    option.textContent = multiplier;
-                    multiplierSelect.appendChild(option);
-                });
-            }
-
-            // Initial update based on the default selected timespan
-            updateMultipliers();
-
-            // Add event listener to timespan select
-            timespanSelect.addEventListener("change", updateMultipliers);
-        });
-    </script> */
 </head>
 <body>
     <h1>Enter Trading Details</h1>
@@ -131,18 +98,11 @@
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
         </select>
-       
+        <br>
+        <label for="multiplier">Multiplier</label>
+        <input type="number" name="multiplier" value="3" min="1" max="4" required>
+        <br>
         <input type="submit" value="Submit">
-        
-        <script>/
-        document.getElementById('multiplier').addEventListener('change', function() {
-            // Get the selected option's value
-            var selectedValue = parseInt(this.value);
-            if (isNaN(selectedValue) || selectedValue < 1) {
-                this.selectedIndex = 0; // Reset to the default option
-            }
-        });
-        </script>
 
     </form>
 </body>
