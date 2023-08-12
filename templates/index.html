@@ -33,7 +33,21 @@
             margin-bottom: 10px;
             color: #6a2c70; /* Darker purple text color */
         }
-        
+          select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Add some spacing between the dropdowns and the submit button 
+        select[name="timespan"],
+        select[name="multiplier"],
+        input[type="submit"] {
+            margin-bottom: 20px;
+        } */
+
         input[type="text"],
         input[type="date"],
         input[type="submit"] {
@@ -47,9 +61,6 @@
         input[type="date"] {
     width: calc(60% - 5px); /* Adjust width for date inputs */
 }
-              input[type="text"] {
-    width: calc(60% - 5px); /* Adjust width for date inputs */
-}
         input[type="submit"] {
             background-color: #6a2c70; /* Darker purple submit button color */
             color: white;
@@ -61,6 +72,43 @@
             background-color: #4c1a4e; /* Slightly darker purple on hover */
         }
     </style>
+    /*
+     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const timespanSelect = document.getElementById("timespan");
+            const multiplierSelect = document.getElementById("multiplier");
+
+            // Define the available multipliers for each timespan
+            const multipliersByTimespan = {
+                hour: ["1-Hour", "2-Hour", "3-Hour", "4-Hour"],
+                day: ["Daily", "2-Day", "3-Day", "4-Day"],
+                week: ["Weekly"],
+                month: ["Monthly"],
+                quarter: ["Quarterly", "Semi-Annual"],
+                year: ["Yearly"]
+            };
+
+            // Function to update multipliers based on the selected timespan
+            function updateMultipliers() {
+                const selectedTimespan = timespanSelect.value;
+                multiplierSelect.innerHTML = ""; // Clear existing options
+                
+                // Create new options based on the selected timespan
+                multipliersByTimespan[selectedTimespan].forEach(multiplier => {
+                    const option = document.createElement("option");
+                    option.value = multiplier;
+                    option.textContent = multiplier;
+                    multiplierSelect.appendChild(option);
+                });
+            }
+
+            // Initial update based on the default selected timespan
+            updateMultipliers();
+
+            // Add event listener to timespan select
+            timespanSelect.addEventListener("change", updateMultipliers);
+        });
+    </script> */
 </head>
 <body>
     <h1>Enter Trading Details</h1>
@@ -74,7 +122,7 @@
         <label for="end_date">End Date:</label>
         <input type="date" name="end_date" required>
         <br>
-        <label for="timespan">Choose a car:</label>
+        <label for="timespan">Choose a Timespan:</label>
         <select id="timespan" name="timespan">
             <option value="hour" selected>Hourly</option>
             <option value="day">Daily</option>
@@ -83,13 +131,19 @@
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
         </select>
-        <select id="multiplier" name="multiplier">
-            <option value="3" selected>e.g. 3-Hour</option>
-            <option value="1">e.g. 1-Hour</option>
-            <option value="2">e.g. 2-Hour</option>
-            <option value="4">e.g. 4-Hour</option>
-        </select>
+       
         <input type="submit" value="Submit">
+        
+        <script>/
+        document.getElementById('multiplier').addEventListener('change', function() {
+            // Get the selected option's value
+            var selectedValue = parseInt(this.value);
+            if (isNaN(selectedValue) || selectedValue < 1) {
+                this.selectedIndex = 0; // Reset to the default option
+            }
+        });
+        </script>
+
     </form>
 </body>
 </html>
