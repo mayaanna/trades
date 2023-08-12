@@ -61,9 +61,6 @@
         input[type="date"] {
     width: calc(60% - 5px); /* Adjust width for date inputs */
 }
-              input[type="text"] {
-    width: calc(60% - 5px); /* Adjust width for other inputs */
-}
         input[type="submit"] {
             background-color: #6a2c70; /* Darker purple submit button color */
             color: white;
@@ -86,8 +83,8 @@
                 day: ["Daily", "2-Day", "3-Day", "4-Day"],
                 week: ["Weekly"],
                 month: ["Monthly"],
-                quarter: ["Quarterly"],
-                year: ["Yearly", "Semi-Annually"]
+                quarter: ["Quarterly", "Semi-Annual"],
+                year: ["Yearly"]
             };
 
             // Function to update multipliers based on the selected timespan
@@ -157,7 +154,7 @@
                 <option value=1 selected>Quarterly</option>
                 <option value=2>Semi-Annual</option>
             </optgroup>
-            <optgroup label="Year>
+            <optgroup label="Year">
                 <option value=1 selected>Yearly</option>
             </optgroup>
         </select>
