@@ -41,12 +41,12 @@
             border-radius: 5px;
         }
 
-        /* Add some spacing between the dropdowns and the submit button */
+        /* Add some spacing between the dropdowns and the submit button 
         select[name="timespan"],
         select[name="multiplier"],
         input[type="submit"] {
             margin-bottom: 20px;
-        }
+        } */
 
         input[type="text"],
         input[type="date"],
@@ -72,6 +72,7 @@
             background-color: #4c1a4e; /* Slightly darker purple on hover */
         }
     </style>
+    /*
      <script>
         document.addEventListener("DOMContentLoaded", function() {
             const timespanSelect = document.getElementById("timespan");
@@ -107,7 +108,7 @@
             // Add event listener to timespan select
             timespanSelect.addEventListener("change", updateMultipliers);
         });
-    </script>
+    </script> */
 </head>
 <body>
     <h1>Enter Trading Details</h1>
@@ -130,37 +131,10 @@
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
         </select>
-        <label for="multiplier">Choose a Multiplier:</label>
-        <select id="multiplier" name="multiplier">
-            <optgroup label="Hour">
-                <option value="3" selected>3-Hour</option>
-                <option value="1">1-Hour</option>
-                <option value="2">2-Hour</option>
-                <option value="4">4-Hour</option>
-            </optgroup>
-            <optgroup label="Day">
-                <option value="1" selected>Daily</option>
-                <option value="2">2-Day</option>
-                <option value="3">3-Day</option>
-                <option value="4">4-Day</option>
-            </optgroup>
-            <optgroup label="Week">
-                <option value="1" selected>Weekly</option>
-            </optgroup>
-            <optgroup label="Month">
-                <option value="1" selected>Monthly</option>
-            </optgroup>
-            <optgroup label="Quarter">
-                <option value="1" selected>Quarterly</option>
-                <option value="2">Semi-Annual</option>
-            </optgroup>
-            <optgroup label="Year">
-                <option value="1" selected>Yearly</option>
-            </optgroup>
-        </select>
+       
         <input type="submit" value="Submit">
         
-        <script>
+        <script>/
         document.getElementById('multiplier').addEventListener('change', function() {
             // Get the selected option's value
             var selectedValue = parseInt(this.value);
