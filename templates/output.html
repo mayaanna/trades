@@ -39,42 +39,36 @@
         {{ dataframe | safe }}
     </table>
     
-    <script>
-        // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
-        const rows = document.querySelectorAll('tr');
-        rows.forEach((row, rowIndex) => {
-            const cells = row.querySelectorAll('td');
-            cells.forEach((cell, cellIndex) => {
-                const content = cell.textContent.trim();
-                if (rowIndex === 0) {
-                    cell.classList.add('header-cell');
-                } else if (!isNaN(content) && content !== '') {
-                    cell.classList.add('numeric-cell');
+   <script>
+    // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
+    const rows = document.querySelectorAll('tr');
+    rows.forEach((row, rowIndex) => {
+        const cells = row.querySelectorAll('td');
+        cells.forEach((cell, cellIndex) => {
+            const content = cell.textContent.trim();
+            if (rowIndex === 0) {
+                cell.classList.add('header-cell');
+            } else if (!isNaN(content) && content !== '') {
+                cell.classList.add('numeric-cell');
+                
+                if (cellIndex === 6 || cellIndex === 7) {
+                    cell.style.backgroundColor = '#dd84fa';
+                } else if (cellIndex === 8 || cellIndex === 9) {
+                    cell.style.backgroundColor = '#cd3dfc';
+                } else if (cellIndex === 1) {
+                    cell.style.backgroundColor = '#ffffff';
+                } else if (cellIndex === 2 || cellIndex === 3) {
+                    cell.style.backgroundColor = '#ebd7fc';
+                } else {
+                    cell.style.backgroundColor = '#edb0ff';
                 }
-                if (content === 'NaN') {
-                    cell.textContent = ''; // Replace 'NaN' with an empty cell
-                }
-                    
-                if (!isNaN(content) && content !== '') {
-                    if (cellIndex === 6 || cellIndex === 7) {
-                        cell.style.backgroundColor = '#dd84fa'; //
-                    } else if (cellIndex === 8 || cellIndex === 9) {
-                        cell.style.backgroundColor = '#cd3dfc'; // 
-                     } else if (cellIndex === 1 ) {
-                        cell.style.backgroundColor = '#ffffff'; // 
-                    }else if (cellIndex ===2 || cellIndex ===3) {
-                        cell.style.backgroundColor = '#ebd7fc';  }
-                    else { cell.style.backgroundColor = '#edb0ff'; }
-        }
-                else if (isNaN(content) {
-                    if (cellIndex === 6 || cellIndex === 7 || cellIndex === 8 || cellIndex === 9) {
-                        cell.style.backgroundColor = '#ffedfc'; 
-                    } 
-                    else { cell.style.backgroundColor = '#ffffff'; }
-        }
-            });
+            } else {
+                cell.style.backgroundColor = '#ffedfc';
+            }
         });
-    </script>
+    });
+</script>
+
 </body>    
 </html>
 
