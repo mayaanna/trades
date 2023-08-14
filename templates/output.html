@@ -39,7 +39,7 @@
         {{ dataframe | safe }}
     </table>
     
-   <script>
+<script>
     // JavaScript to shade header cells and numeric cells and replace NaN with empty cell
     const rows = document.querySelectorAll('tr');
     rows.forEach((row, rowIndex) => {
@@ -62,12 +62,16 @@
                 } else {
                     cell.style.backgroundColor = '#edb0ff';
                 }
-            } else {
+            } else if (content === 'NaN') {
                 cell.style.backgroundColor = '#ffedfc';
+                cell.textContent = ''; // Replace 'NaN' with empty cells
+            } else {
+                cell.style.backgroundColor = '#ffffff';
             }
         });
     });
 </script>
+
 
 </body>    
 </html>
