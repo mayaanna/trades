@@ -180,9 +180,8 @@ def trade():
     df['Merged_Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
     df['Merged_Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
     df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
-    df['Merged_Highs'] = df['Merged_Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in x else f'<span class="different">{x}</span>')
-    df['Merged_Lows'] = df['Merged_Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in x else f'<span class="different">{x}</span>')
-    
+    df['Merged_Highs'] = df['Merged_Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    df['Merged_Lows'] = df['Merged_Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
