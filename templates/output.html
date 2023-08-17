@@ -15,20 +15,29 @@
         p {
             font-size: 18px; /* Change the font size to your preference */
         }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .common {
+        color: #b3cfff; /* Customize the style for common values */
+         }
+    
+        .different {
+        color: #ffc4eb; /* Customize the style for different values */
+          }
+        .styled-table {
+              border-collapse: collapse;
+              width: auto;
+              border: 1px solid #ddd;
+          }
+
+         .styled-table th, .styled-table td {
             border: 1px solid #ddd;
-            
-        }
-        
-        th, td {
             padding: 8px;
             text-align: left;
-            border: 1px solid #ddd; /* Single border for all cells */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #B9BFFD;
         }
-        
+
     </style>
 </head>
 <body>
@@ -46,29 +55,11 @@
         const cells = row.querySelectorAll('td');
         cells.forEach((cell, cellIndex) => {
             const content = cell.textContent.trim();
-            if (rowIndex === 0) {
-                cell.classList.add('header-cell');
-            } else if (!isNaN(content) && content !== '') {
-                cell.classList.add('numeric-cell');
-                
-                if (cellIndex === 6 || cellIndex === 7) {
-                    cell.style.backgroundColor = '#dd84fa';
-                } else if (cellIndex === 8 || cellIndex === 9) {
-                    cell.style.backgroundColor = '#cd3dfc';
-                } else if (cellIndex === 1) {
-                    cell.style.backgroundColor = '#ffffff';
-                } else if (cellIndex === 2 || cellIndex === 3) {
-                    cell.style.backgroundColor = '#ebd7fc';
-                } else {
-                    cell.style.backgroundColor = '#edb0ff';
-                }
-            } else if (content === 'NaN') {
-                cell.style.backgroundColor = '#ffedfc';
+            if (content === 'NaN') {
                 cell.textContent = ''; // Replace 'NaN' with empty cells
-            } else {
-                cell.style.backgroundColor = '#ffedfc';
+            } 
             }
-        });
+        );
     });
 </script>
 
