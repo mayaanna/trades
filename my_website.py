@@ -180,7 +180,7 @@ def trade():
     df['Merged_Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
     df['Merged_Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
 
-    df.drop([['High2', 'High3', 'Low2', 'Low3']], inplace = True)
+    df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
 
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
