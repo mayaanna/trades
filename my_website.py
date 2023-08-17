@@ -157,7 +157,32 @@ def trade():
 
     df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
     df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']].round(2)
-    df_html = df.to_html(index=False)
+
+    # Merge columns and highlight based on common or not
+    def merge_and_highlight(row, col1, col2):
+        if pd.notna(row[col1]) and pd.notna(row[col2]):
+            if row[col1] == row[col2]:
+                return f'<span class="common">{row[col1]}</span>'
+            else:
+                return f'<span class="different">{row[col1]} ({row[col2]})</span>'
+        elif pd.notna(row[col1]):
+            return row[col1]
+        elif pd.notna(row[col2]):
+            return row[col2]
+        else:
+            return ''
+            
+    high2 = 'High2'
+    high3 = 'High3'
+    low2 = 'Low2'
+    low3 = 'Low3'
+
+    df['Merged_Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
+    df['Merged_Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
+
+    df.drop([['High2', 'High3', 'Low2', 'Low3']], inplace = True)
+
+    df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
     return render_template("output.html", ticker=ticker, dataframe=df_html)
 
