@@ -2,6 +2,7 @@ from flask import Flask,  render_template, request
 from polygon import RESTClient
 import pandas as pd
 import numpy as np
+import requests
 
 website = Flask(__name__) 
 
@@ -23,7 +24,6 @@ def trade():
     timespan = request.form['timespan']
     multiplier = request.form['multiplier']
 
-    
     # List Aggregates (Bars)
     aggs = []
     for a in client.list_aggs(ticker=ticker, multiplier=multiplier, timespan=timespan, from_=f"{start_date}", to=f"{end_date}", limit=50000):
@@ -180,13 +180,43 @@ def trade():
     df['Merged_Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
     df['Merged_Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
     df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
-    df['Merged_Highs'] = df['Merged_Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in x else f'<span class="different">{x}</span>')
-    df['Merged_Lows'] = df['Merged_Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in x else f'<span class="different">{x}</span>')
-    
+    df['Merged_Highs'] = df['Merged_Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    df['Merged_Lows'] = df['Merged_Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
-    return render_template("output.html", ticker=ticker, dataframe=df_html)
+# Set up the API endpoint and parameters
+    symbol = request.form['ticker']
+    api_key = "WVUSvKCnEd6LhmVcunpZUXfeTq39md5p"
 
+    url = f"https://api.polygon.io/v2/aggs/ticker/{symbol}/prev?adjusted=true&apiKey={api_key}"
+
+    # Make the API request
+    response = requests.get(url)
+    prev = response.json()
+    prev = prev['results']
+
+    prev_data = prev[0]  # Accessing the first dictionary in the list
+
+    open_price = prev_data['o']
+    close_price = prev_data['c']
+    low_price = prev_data['l']
+    high_price = prev_data['h']
+
+    # Create a DataFrame
+    data_dict = {
+        "Previous Open": [open_price],
+        "Previous High": [high_price],
+        "Previous Low": [low_price],
+        "Previous Close": [close_price]
+    }
+    prevs = pd.DataFrame(data_dict)
+
+    # Convert the DataFrames to HTML tables
+    # Replace with your function to get the existing table HTML
+    prev_html = prevs.to_html(index=False, escape=False, classes=['styled-table2','text-with-colour'])
+
+    # Extract the values
+    return render_template("output.html", previous=prev_html, ticker=ticker, dataframe= df_html)
 
 if __name__ == '__main__':
     # Run the Flask app
