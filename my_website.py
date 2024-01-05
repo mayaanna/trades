@@ -200,14 +200,14 @@ def trade():
     df['Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
     df['Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
 
-    # df['Highs'] = pd.to_numeric(df['Highs'], errors = 'coerce')
-    # df['Lows'] = pd.to_numeric(df['Lows'], errors = 'coerce')
+    df['Highs'] = pd.to_numeric(df['Highs'], errors = 'coerce')
+    df['Lows'] = pd.to_numeric(df['Lows'], errors = 'coerce')
 
     Low_High = df[df['Highs'].notna()]
     High_Low = df[df['Lows'].notna()]
 
-    Low_High['Highs'] = pd.to_numeric(Low_High['Highs'], errors = 'coerce')
-    High_Low['Lows'] = pd.to_numeric(High_Low['Lows'], errors = 'coerce')
+    # Low_High['Highs'] = pd.to_numeric(Low_High['Highs'], errors = 'coerce')
+    # High_Low['Lows'] = pd.to_numeric(High_Low['Lows'], errors = 'coerce')
 
     high_low_condition = (
         (High_Low['Lows'] > High_Low['Lows'].shift(1)) & (High_Low['Lows'] > High_Low['Lows'].shift(-1))
@@ -221,6 +221,8 @@ def trade():
 
     Low_High['Low_High'] = np.where(low_high_condition, Low_High['Highs'], np.nan)
 
+    df['Highs'] = df['Highs'].fillna('')
+    df['Lows'] = df['Lows'].fillna('')
 
     df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
     df['Highs'] = df['Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
@@ -240,6 +242,7 @@ def trade():
     df = df.drop_duplicates()
     df.fillna('', inplace=True)
     df.replace(np.nan, '', inplace=True)
+
     squeeze.fillna('', inplace=True)
 
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
