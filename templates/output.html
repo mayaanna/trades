@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trading Output - Ticker: {{ ticker }}</title>
     <style>
         /* Add your CSS styles here */
@@ -16,18 +18,18 @@
             font-size: 18px; /* Change the font size to your preference */
         }
         .common {
-        color: #021bfa; /* Customize the style for common values */
-         }
+            color: #021bfa; /* Customize the style for common values */
+        }
         .different {
-        color: #ff08d6; /* Customize the style for different values */
-          }
+            color: #ff08d6; /* Customize the style for different values */
+        }
         .styled-table {
-              border-collapse: collapse;
-              width: auto;
-              border: 1px solid #ddd;
-          }
+            border-collapse: collapse;
+            width: auto;
+            border: 1px solid #ddd;
+        }
 
-         .styled-table th, .styled-table td {
+        .styled-table th, .styled-table td, .styled-table2 th, .styled-table2 td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
@@ -38,41 +40,40 @@
         }
 
         .styled-table2 {
-              border-collapse: collapse;
-              width: auto;
-              border: 1px solid #ddd;
-          }
+            border-collapse: collapse;
+            width: auto;
+            border: 1px solid #ddd;
+        }
 
-         .text-with-colour {
+        .text-with-colour {
             color: white;
-         } 
+        } 
 
-         .styled-table2 th, .styled-table2 td {
+        .styled-table2 th, .styled-table2 td {
             border: 0.5px solid #ddd;
             padding: 4px;
-            text-align: centre;
+            text-align: left; /* Adjust alignment to left for consistency */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background-color: #9244b9;
+            background-color: #f5e0ff;
         }
-
     </style>
 </head>
 <body>
     <h1>Trading Output</h1>
     <p>Ticker: {{ ticker }}</p>
-    <table>
+    <table class="styled-table">
         {{ previous | safe }}
     </table>
     <div style="margin-bottom: 10px;"></div>
-    <table> 
-        {{ squeeze | safe }}
+     <!-- Render the DataFrame as an HTML table with the existing styling -->
+     <table class="styled-table">
+        {{ dataframe | safe }}
     </table>
     <div style="margin-bottom: 10px;"></div>
-    <!-- Render the DataFrame as an HTML table -->
-    <table>
-        {{ dataframe | safe }}
+    <table class="styled-table"> <!-- Apply the same styling class to the "squeeze" table -->
+        {{ squeeze | safe }}
     </table>
     
 <script>
@@ -85,12 +86,9 @@
             if (content === 'NaN') {
                 cell.textContent = ''; // Replace 'NaN' with empty cells
             } 
-            }
-        );
+        });
     });
 </script>
 
-
 </body>    
 </html>
-

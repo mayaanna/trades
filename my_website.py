@@ -3,6 +3,7 @@ from polygon import RESTClient
 import pandas as pd
 import numpy as np
 import requests
+import math
 
 website = Flask(__name__) 
 
@@ -23,6 +24,7 @@ def trade():
     start_date = request.form['start_date']
     timespan = request.form['timespan']
     multiplier = request.form['multiplier']
+    period = int(request.form['period'])
 
     # List Aggregates (Bars)
     aggs = []
@@ -33,34 +35,42 @@ def trade():
 
     data['date'] = pd.to_datetime(data['timestamp'], unit='ms')
 
-    period = 55
+    
+    # Function to calculate logarithmic return
+    def calculate_log_return(price, initial_price):
+        return math.log(price / initial_price)
 
-    if(timespan != 'hour'):
-        period = 20
-    elif timespan == 'hour':
-        period = 55
-    else:
-        period = 20
+    # Function to calculate simple return
+    def calculate_simple_return(price, initial_price):
+        return ((price - initial_price) / initial_price) * 100
+
+    data['return'] = ((data['close']-data['close'].shift(1))/ (data['close'].shift(1))) * 100
 
     data['average'] = data['close'].rolling(window=period).mean()
 
-    data['AbsoluteDeviation'] = abs(data['close'] - data['average'])
-    data['MAD'] = data['AbsoluteDeviation'].rolling(window=period).mean()
+    # MAD, like range, variation and standard deviations, is another measure of how spread out the data is.
+    # Comparing the MAD value at a specific date with historical MAD values can provide context. If the current MAD is significantly higher than historical values, it may suggest increased volatility.
 
-    data['return'] = data['close'].pct_change()
+    data['deviation'] = data['close'] - data[ 'average']
 
+    data['MAD'] = data['deviation'].rolling(window=period).mean()
     # Calculate the volatility
-    data['volatility'] = data['return'].std()
+    data['RollingVolatility'] = data['return'].rolling(window=period).std()
+    # Calculate 1-month rolling window of daily volatility
+    data['vol'] = data['RollingVolatility'].rolling(window=period).sum()
 
     data['SumMAD'] = data['MAD'].rolling(window=period).sum()
 
     # Calculate 1-month rolling window of daily volatility
-    data['RollingVolatility'] = data['volatility'].rolling(window=period).mean()
+    data['vol'] = data['RollingVolatility'].rolling(window=period).sum()
 
     # Calculate the "Price"
-    data['Price'] = data['SumMAD'] / data['RollingVolatility']
+    data['Price'] = data['SumMAD'] / data['vol']
 
-    squeeze = data[['date','Price']]
+    data['Price'] = data['Price'].round(2)
+    data['MAD'] = data['MAD'].round(2)
+
+    squeeze = data[['date','close','MAD','Price']]
 
     # Calculate the Low1 that meet the conditions
     data['Prev_Lows'] = data['low'].shift(1)
@@ -123,10 +133,10 @@ def trade():
     filtered_low_high = low_high[low_high['HIP'].notna() | low_high['LOP'].notna()]
 
     # Merge the 'average' column back into the filtered dataframe
-    filtered_low_high = pd.merge(filtered_low_high, data[['date', 'average']], on='date', how='left')
+    filtered_low_high = pd.merge(filtered_low_high, data[['date', 'average', 'MAD']], on='date', how='left')
 
     # Create a new DataFrame with selected columns
-    selected_columns = ['date', 'average', 'HIP', 'LOP']
+    selected_columns = ['date', 'average', 'HIP', 'LOP', 'MAD']
 
     filtered_low_high_selected = filtered_low_high[selected_columns]
 
@@ -165,8 +175,8 @@ def trade():
     # Reset the index of the merged DataFrame
     merged_df2.reset_index(drop=True, inplace=True)
 
-    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']]
-    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
+    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'MAD']]
+    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'MAD']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'MAD']].round(2)
 
     # Merge columns and highlight based on common or not
     def merge_and_highlight(row, col1, col2):
@@ -190,20 +200,48 @@ def trade():
     df['Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
     df['Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
 
-    high_low_condition = (
-        (df['Lows'] > df['Lows'].shift(1)) & (df['Lows'] > df['Lows'].shift(-1))
-    )
+    # df['Highs'] = pd.to_numeric(df['Highs'], errors = 'coerce')
+    # df['Lows'] = pd.to_numeric(df['Lows'], errors = 'coerce')
 
+    Low_High = df[df['Highs'].notna()]
+    High_Low = df[df['Lows'].notna()]
+
+    Low_High['Highs'] = pd.to_numeric(Low_High['Highs'], errors = 'coerce')
+    High_Low['Lows'] = pd.to_numeric(High_Low['Lows'], errors = 'coerce')
+
+    high_low_condition = (
+        (High_Low['Lows'] > High_Low['Lows'].shift(1)) & (High_Low['Lows'] > High_Low['Lows'].shift(-1))
+    )
     low_high_condition = (
-            (df['Highs'] < df['Highs'].shift(1)) & (df['Highs'] < df['Highs'].shift(-1))
+            (Low_High['Highs'] < Low_High['Highs'].shift(1)) & (Low_High['Highs'] < Low_High['Highs'].shift(-1))
         )
-    
-    df['High_Low'] = np.where(high_low_condition, df['Lows'], np.nan)
-    df['Low_High'] = np.where(low_high_condition, df['Highs'], np.nan)
+
+    High_Low['High_Low'] = np.where(high_low_condition, High_Low['Lows'], np.nan)
+
+
+    Low_High['Low_High'] = np.where(low_high_condition, Low_High['Highs'], np.nan)
+
 
     df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
     df['Highs'] = df['Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
     df['Lows'] = df['Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+
+    df2 = pd.concat([High_Low,Low_High])
+    df2.sort_values(by='date', inplace=True)
+    df2.reset_index(drop=True, inplace=True)
+
+    df2['Low_High'] = df2['Low_High'].round(2)
+    df2['High_Low'] = df2['High_Low'].round(2)
+
+    df2 = df2[['date', 'Low_High','High_Low']]
+
+    df = df.merge(df2, how='left', on = 'date')
+
+    df = df.drop_duplicates()
+    df.fillna('', inplace=True)
+    df.replace(np.nan, '', inplace=True)
+    squeeze.fillna('', inplace=True)
+
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
 # Set up the API endpoint and parameters
@@ -237,7 +275,7 @@ def trade():
     # Replace with your function to get the existing table HTML
     prev_html = prevs.to_html(index=False, escape=False, classes=['styled-table2','text-with-colour'])
 
-    squeeze_html = squeeze.to_html(index=False, escape=False)
+    squeeze_html = squeeze.to_html(index=False, classes='styled-table', escape=False)
     # Extract the values
     return render_template("output.html", previous=prev_html, squeeze = squeeze_html, ticker=ticker, dataframe= df_html)
 

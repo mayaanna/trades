@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter Trading Details</title>
     <style>
         /* Add your CSS styles here */
@@ -14,86 +16,71 @@
             justify-content: center;
             min-height: 100vh;
         }
-        
+
         h1 {
             color: #6a2c70; /* Darker purple text color */
             font-size: 36px;
             margin-bottom: 20px;
         }
-        
+
         form {
             background-color: white;
             padding: 20px;
             border-radius: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         label {
             display: block;
             margin-bottom: 10px;
             color: #6a2c70; /* Darker purple text color */
         }
-          select {
-            width: 100%;
+
+        select,
+        input[type="number"],
+        input[type="submit"],
+        input[type="text"],
+        input[type="date"] {
+            width: calc(100% - 20px);
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
-        /* // Add some spacing between the dropdowns and the submit button  */
-        select[name="timespan"],
+        input[type="date"] {
+            width: calc(100% - 22px); /* Adjust width for date inputs */
+        }
+
         input[type="number"],
         input[type="submit"] {
-            margin-bottom: 20px;
-        } 
-
-        input[type="text"],
-        input[type="date"],
-        input[type="submit"],
-        input[type="number"]
-        {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            width: calc(100% - 22px); /* Adjust width for number and submit inputs */
         }
-        
-        input[type="date"] {
-    width: calc(60% - 5px); /* Adjust width for date inputs */
-}
-        input[type="text"] {
-    width: calc(60% - 5px); /* Adjust width for date inputs */
-}
-        input[type="number"] {
-    width: calc(60% - 5px); /* Adjust width for date inputs */
-}
+
         input[type="submit"] {
             background-color: #6a2c70; /* Darker purple submit button color */
             color: white;
             border: none;
             cursor: pointer;
         }
-        
+
         input[type="submit"]:hover {
             background-color: #4c1a4e; /* Slightly darker purple on hover */
         }
     </style>
-
 </head>
 <body>
     <h1>Enter Trading Details</h1>
     <form method="POST" action="/trade">
         <label for="ticker">Ticker:</label>
         <input type="text" name="ticker" required>
-        <br>
+
         <label for="start_date">Start Date:</label>
         <input type="date" name="start_date" required>
-        <br>
+
         <label for="end_date">End Date:</label>
         <input type="date" name="end_date" required>
-        <br>
+
         <label for="timespan">Choose a Timespan:</label>
         <select id="timespan" name="timespan">
             <option value="hour" selected>Hourly</option>
@@ -103,12 +90,14 @@
             <option value="quarter">Quarterly</option>
             <option value="year">Yearly</option>
         </select>
-        <br>
+
         <label for="multiplier">Multiplier</label>
         <input type="number" name="multiplier" value="3" min="1" max="4" required>
-        <br>
-        <input type="submit" value="Submit">
 
+        <label for="period">Choose a Period:</label>
+        <input type="number" name="period" value="55" min="1" max="100" step="1" required>
+
+        <input type="submit" value="Submit">
     </form>
 </body>
 </html>
