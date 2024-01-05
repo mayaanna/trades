@@ -34,7 +34,33 @@ def trade():
     data['date'] = pd.to_datetime(data['timestamp'], unit='ms')
 
     period = 55
+
+    if(timespan != 'hour'):
+        period = 20
+    elif timespan == 'hour':
+        period = 55
+    else:
+        period = 20
+
     data['average'] = data['close'].rolling(window=period).mean()
+
+    data['AbsoluteDeviation'] = abs(data['close'] - data['average'])
+    data['MAD'] = data['AbsoluteDeviation'].rolling(window=period).mean()
+
+    data['return'] = data['close'].pct_change()
+
+    # Calculate the volatility
+    data['volatility'] = data['return'].std()
+
+    data['SumMAD'] = data['MAD'].rolling(window=period).sum()
+
+    # Calculate 1-month rolling window of daily volatility
+    data['RollingVolatility'] = data['volatility'].rolling(window=period).mean()
+
+    # Calculate the "Price"
+    data['Price'] = data['SumMAD'] / data['RollingVolatility']
+
+    squeeze = data[['date','Price']]
 
     # Calculate the Low1 that meet the conditions
     data['Prev_Lows'] = data['low'].shift(1)
@@ -119,22 +145,6 @@ def trade():
     Low2s['Low3'] = np.where(Low3_conditions, Low2s['LOP'], np.nan)
     High2s['High3'] = np.where(High3_conditions, High2s['HIP'], np.nan)
 
-    High3A_conditions = (
-        (High2s['High2'].shift(1) < High2s['High2']) &
-        (High2s['High2'].shift(-1) < High2s['High2']) &
-        (High2s['High2'].shift(1) > High2s['High2'].shift(-1))
-    )
-
-    Low3A_conditions = (
-        (Low2s['Low2'].shift(1) > Low2s['Low2']) &
-        (Low2s['Low2'].shift(-1) > Low2s['Low2']) &
-        (Low2s['Low2'].shift(1) < Low2s['Low2'].shift(-1))
-    )
-        
-        # Create a new column 'Filtered_Lows' with filtered low values and set others to NaN
-    Low2s['Low3A'] = np.where(Low3A_conditions, Low2s['LOP'], np.nan)
-    High2s['High3A'] = np.where(High3A_conditions, High2s['HIP'], np.nan)
-        
     # Concatenate the DataFrames along the rows
     merged_df = pd.concat([Low2s, High2s])
 
@@ -144,7 +154,7 @@ def trade():
     # Reset the index of the merged DataFrame
     merged_df.reset_index(drop=True, inplace=True)
 
-    df_final = merged_df[['date', 'High2', 'High3', 'Low2', 'Low3', 'High3A', 'Low3A']]
+    df_final = merged_df[['date', 'High2', 'High3', 'Low2', 'Low3']]
 
     # Merge the DataFrames based on the 'date' column using an outer join
     merged_df2 = pd.merge(df_final, filtered_low_high_selected, on='date', how='outer')
@@ -155,8 +165,8 @@ def trade():
     # Reset the index of the merged DataFrame
     merged_df2.reset_index(drop=True, inplace=True)
 
-    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A','Low3A']]
-    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3', 'High3A', 'Low3A']].round(2)
+    df = merged_df2[['date', 'average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']]
+    df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']] = df[['average', 'HIP', 'LOP', 'High2', 'Low2', 'High3', 'Low3']].round(2)
 
     # Merge columns and highlight based on common or not
     def merge_and_highlight(row, col1, col2):
@@ -177,11 +187,23 @@ def trade():
     low2 = 'Low2'
     low3 = 'Low3'
 
-    df['Merged_Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
-    df['Merged_Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
+    df['Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
+    df['Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
+
+    high_low_condition = (
+        (df['Lows'] > df['Lows'].shift(1)) & (df['Lows'] > df['Lows'].shift(-1))
+    )
+
+    low_high_condition = (
+            (df['Highs'] < df['Highs'].shift(1)) & (df['Highs'] < df['Highs'].shift(-1))
+        )
+    
+    df['High_Low'] = np.where(high_low_condition, df['Lows'], np.nan)
+    df['Low_High'] = np.where(low_high_condition, df['Highs'], np.nan)
+
     df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
-    df['Merged_Highs'] = df['Merged_Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
-    df['Merged_Lows'] = df['Merged_Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    df['Highs'] = df['Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    df['Lows'] = df['Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
     df_html = df.to_html(escape=False, classes='styled-table', index=False)
 
 # Set up the API endpoint and parameters
@@ -215,8 +237,9 @@ def trade():
     # Replace with your function to get the existing table HTML
     prev_html = prevs.to_html(index=False, escape=False, classes=['styled-table2','text-with-colour'])
 
+    squeeze_html = squeeze.to_html(index=False, escape=False)
     # Extract the values
-    return render_template("output.html", previous=prev_html, ticker=ticker, dataframe= df_html)
+    return render_template("output.html", previous=prev_html, squeeze = squeeze_html, ticker=ticker, dataframe= df_html)
 
 if __name__ == '__main__':
     # Run the Flask app
