@@ -182,7 +182,7 @@ def trade():
     def merge_and_highlight(row, col1, col2):
         if pd.notna(row[col1]) and pd.notna(row[col2]):
             if row[col1] == row[col2]:
-                return f'<span class="common">{row[col1]}</span>'
+                return f'<span class="common">{row[col1]} ({row[col2]})</span>'
             else:
                 return f'<span class="different">{row[col1]} ({row[col2]})</span>'
         elif pd.notna(row[col1]):
@@ -197,36 +197,36 @@ def trade():
     low2 = 'Low2'
     low3 = 'Low3'
 
-    df['Highs'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
-    df['Lows'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
+    df['H2notH3'] = df.apply(merge_and_highlight, args = (high2, high3), axis=1)
+    df['L2notL3'] = df.apply(merge_and_highlight, args = (low2, low3), axis=1)
 
-    df['Highs'] = pd.to_numeric(df['Highs'], errors = 'coerce')
-    df['Lows'] = pd.to_numeric(df['Lows'], errors = 'coerce')
+    df['H2notH3'] = pd.to_numeric(df['H2notH3'], errors = 'coerce')
+    df['L2notL3'] = pd.to_numeric(df['L2notL3'], errors = 'coerce')
 
-    Low_High = df[df['Highs'].notna()]
-    High_Low = df[df['Lows'].notna()]
+    Low_High = df[df['H2notH3'].notna()]
+    High_Low = df[df['L2notL3'].notna()]
 
     # Low_High['Highs'] = pd.to_numeric(Low_High['Highs'], errors = 'coerce')
     # High_Low['Lows'] = pd.to_numeric(High_Low['Lows'], errors = 'coerce')
 
     high_low_condition = (
-        (High_Low['Lows'] > High_Low['Lows'].shift(1)) & (High_Low['Lows'] > High_Low['Lows'].shift(-1))
+        (High_Low['L2notL3'] > High_Low['L2notL3'].shift(1)) & (High_Low['L2notL3'] > High_Low['L2notL3'].shift(-1))
     )
     low_high_condition = (
-            (Low_High['Highs'] < Low_High['Highs'].shift(1)) & (Low_High['Highs'] < Low_High['Highs'].shift(-1))
+            (Low_High['H2notH3'] < Low_High['H2notH3'].shift(1)) & (Low_High['H2notH3'] < Low_High['H2notH3'].shift(-1))
         )
 
-    High_Low['High_Low'] = np.where(high_low_condition, High_Low['Lows'], np.nan)
+    High_Low['High_Low'] = np.where(high_low_condition, High_Low['L2notL3'], np.nan)
 
 
-    Low_High['Low_High'] = np.where(low_high_condition, Low_High['Highs'], np.nan)
+    Low_High['Low_High'] = np.where(low_high_condition, Low_High['H2notH3'], np.nan)
 
-    df['Highs'] = df['Highs'].fillna('')
-    df['Lows'] = df['Lows'].fillna('')
+    df['H2notH3'] = df['H2notH3'].fillna('')
+    df['L2notL3'] = df['L2notL3'].fillna('')
 
-    df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
-    df['Highs'] = df['Highs'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
-    df['Lows'] = df['Lows'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    # df.drop(['High2', 'High3', 'Low2', 'Low3'], axis=1, inplace=True)
+    df['H2notH3'] = df['H2notH3'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
+    df['L2notL3'] = df['L2notL3'].apply(lambda x: f'<span class="common">{x}</span>' if '<span class="common">' in str(x) else f'<span class="different">{x}</span>')
 
     df2 = pd.concat([High_Low,Low_High])
     df2.sort_values(by='date', inplace=True)
